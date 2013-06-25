@@ -4,7 +4,7 @@
 
 ;; Author: Tomoya Tanjo <ttanjo@gmail.com>
 ;; URL: https://github.com/tom-tan/flycheck-d/
-;; Package-Requires: ((dash "20130617.739"))
+;; Package-Requires: ((flycheck "20130606.1406") (dash "20130617.739"))
 ;; Keywords: flycheck, d
 
 ;; This program is free software; you can redistribute it and/or modify
@@ -26,6 +26,7 @@
 ;;
 ;; Requirements:
 ;;   * DMD 2.063 or later
+;;   * flycheck.el (https://github.com/lunaryorn/flycheck)
 ;;   * dash.el (https://github.com/magnars/dash.el)
 ;;
 ;; To use this package, add the following line to your .emacs file:

@@ -1,4 +1,4 @@
-#flycheck.el
+#flycheck-d.el
 
 This library adds D support to flycheck.
 

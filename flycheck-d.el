@@ -56,41 +56,63 @@
 ;;; Code:
 (require 'flycheck)
 (require 'dash)
+(require 's)
 
 (defconst d-error-patterns
-  '(("^\\(?1:.*\\)(\\(?2:[0-9]+\\)): Error: \\(?4:.*\\)$" error)
-    ("^\\(?1:.*\\)(\\(?2:[0-9]+\\)): Warning: \\(?4:.*\\)$" warning)
-    ("^\\(?1:.*\\)(\\(?2:[0-9]+\\)): Deprecation: \\(?4:.*\\)$" warning))
+  '((error line-start (file-name) "(" line "): Error: " (message) line-end)
+    (warning line-start (file-name) "(" line "): Warning: " (message) line-end)
+    (warning line-start (file-name) "(" line "): Deprecation: " (message) line-end))
   "Error patterns for D.")
 
 (defconst d-unittest-error-patterns
-  '(("^.+@\\(?1:[^.]+\\)\\(?:\\.d\\)?(\\(?2:[0-9]+\\)): \\(?4:.*\\)$" error))
+  '((error line-start (one-or-more anything) "@" (file-name) (zero-or-one ".d") "(" line "): " (message)))
   "Error patterns for D unittest.")
 
-(defun flycheck-parse-d-unittest (output _checker _buffer)
-  (let ((tokens (flycheck-tokenize-output-with-patterns output
-                                                        (append d-error-patterns
-                                                                d-unittest-error-patterns))))
-    (-flatten
-     (append (flycheck-parse-errors-with-patterns tokens d-error-patterns)
-             (mapcar (lambda (err)
-                       (if (null err) err
-                           (setf (flycheck-error-filename err) (concat (flycheck-error-filename err) ".d"))
-                           err))
-                     (flycheck-parse-errors-with-patterns tokens d-unittest-error-patterns))))))
+(defun flycheck-d-base-dir ()
+  (let* ((str (buffer-string))
+         (nest (if (string-match "module\s+\\([^\s]+\\);" str)
+                   (->> str
+                     (match-string-no-properties 1)
+                     string-to-vector
+                     (cl-count ?.))
+                   0)))
+    (when (equal (file-name-nondirectory (buffer-file-name)) "package.d")
+      (cl-incf nest))
+    (concat "-I./" (s-repeat nest "../"))))
 
-(flycheck-declare-checker d
+(flycheck-define-checker d
   "A D syntax checker using D compiler."
-  :command '("dmd" "-debug" "-o-" "-property" "-wi" source)
-  :error-patterns d-error-patterns
-  :modes 'd-mode
-  :next-checkers '((warnings-only . d-unittest)))
+  :command ("dmd" "-debug" "-o-" "-property" "-wi" (eval (flycheck-d-base-dir)) source)
+  :error-patterns
+  ((error line-start (file-name) "(" line "): Error: " (message) line-end)
+   (warning line-start (file-name) "(" line "): Warning: " (message) line-end)
+   (warning line-start (file-name) "(" line "): Deprecation: " (message) line-end))
+  :modes d-mode
+  :next-checkers ((warnings-only . d-unittest)))
 
-(flycheck-declare-checker d-unittest
+(flycheck-define-checker d-unittest
   "A syntax and unittest checker for D."
-  :command '("dmd" "-debug" "-property" "-wi" "-unittest" "-main" "-run" source)
-  :error-parser 'flycheck-parse-d-unittest
-  :modes 'd-mode)
+  :command ("rdmd" "-debug" "-property" "-wi" (eval (flycheck-d-base-dir)) "-unittest" "-main" source)
+  :error-parser
+  (lambda (output _checker _buffer)
+    (let* ((d-pat-regexp (--map (cons (flycheck-rx-to-string `(and ,@(cdr it)) :no-group)
+                                    (car it))
+                              d-error-patterns))
+           (d-unittest-pat-regexp (--map (cons (flycheck-rx-to-string `(and ,@(cdr it)) :no-group)
+                                             (car it))
+                                       d-unittest-error-patterns))
+           (tokens (flycheck-tokenize-output-with-patterns
+                    output (append d-pat-regexp d-unittest-pat-regexp))))
+      (-flatten
+       (append (flycheck-parse-errors-with-patterns tokens d-pat-regexp)
+               (mapcar (lambda (err)
+                         (if (null err) err
+                             (setf (flycheck-error-filename err)
+                                   (concat (flycheck-error-filename err) ".d"))
+                             err))
+                       (flycheck-parse-errors-with-patterns tokens
+                                                            d-unittest-pat-regexp))))))
+  :modes d-mode)
 
 (add-to-list 'flycheck-checkers 'd-unittest)
 (add-to-list 'flycheck-checkers 'd)

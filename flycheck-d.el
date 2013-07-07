@@ -4,7 +4,7 @@
 
 ;; Author: Tomoya Tanjo <ttanjo@gmail.com>
 ;; URL: https://github.com/tom-tan/flycheck-d/
-;; Package-Requires: ((flycheck "20130606.1406") (dash "20130617.739"))
+;; Package-Requires: ((flycheck "0.13") (dash "1.4.0"))
 ;; Keywords: flycheck, d
 
 ;; This program is free software; you can redistribute it and/or modify

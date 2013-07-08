@@ -32,3 +32,7 @@ unittest
     assert(1+2 == 3);
 }
 ```
+
+Link:
+  * [Start D with Emacs](https://github.com/tom-tan/flycheck-d/wiki/Start-D-with-Emacs)
+  * [Emacs で始める D言語!](http://qiita.com/tm_tn/items/1d01c4500e1ca7632140) (Written in Japanese)

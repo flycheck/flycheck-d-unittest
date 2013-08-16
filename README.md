@@ -1,4 +1,4 @@
-## Notice
+## For Flycheck-d users
 Now D syntax checker is a part of Flycheck!
 This library only provides D unittest checker.
 

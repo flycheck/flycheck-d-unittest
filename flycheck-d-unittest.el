@@ -1,9 +1,9 @@
-;;; flycheck-d.el --- Add D unittest support to flycheck
+;;; flycheck-d-unittest.el --- Add D unittest support to flycheck
 
 ;; Copyright (C) 2013 by Tomoya Tanjo
 
 ;; Author: Tomoya Tanjo <ttanjo@gmail.com>
-;; URL: https://github.com/tom-tan/flycheck-d/
+;; URL: https://github.com/tom-tan/flycheck-d-unittest/
 ;; Package-Requires: ((flycheck "0.14") (dash "1.4.0"))
 ;; Keywords: flycheck, d
 
@@ -30,11 +30,11 @@
 ;;   * dash.el (https://github.com/magnars/dash.el)
 ;;
 ;; To use this package, add the following line to your .emacs file:
-;;     (require 'flycheck-d)
+;;     (require 'flycheck-d-unittest)
 ;;     (setup-flycheck-d-unittest)
 ;; It detects any compile errors, warnings and deprecated features during unittest.
 ;;
-;; Note: flycheck-d runs DMD with -unittest and -main option for unittesting.
+;; Note: flycheck-d-unittest runs DMD with -unittest and -main option for unittesting.
 ;; Please enclose main function in version(!unittest) block as follows:
 ;;
 ;; ---
@@ -93,5 +93,5 @@
   (put 'd-dmd :flycheck-next-checkers
        (cons '(warnings-only . d-dmd-unittest) (flycheck-checker-next-checkers 'd-dmd))))
 
-(provide 'flycheck-d)
-;;; flycheck-d.el ends here
+(provide 'flycheck-d-unittest)
+;;; flycheck-d-unittest.el ends here

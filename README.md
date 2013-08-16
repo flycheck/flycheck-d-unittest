@@ -1,6 +1,10 @@
+## Notice
+Now D syntax checker is a part of Flycheck!
+This library only provides D unittest checker.
+
 #flycheck-d.el
 
-This library adds D support to flycheck.
+This library adds D unittest support to flycheck.
 
 Requirements:
   * DMD 2.063 or later
@@ -10,9 +14,9 @@ Requirements:
 To use this package, add the following line to your `.emacs` file:
 ```elisp
     (require 'flycheck-d)
+    (setup-flycheck-d-unittest)
 ```
-It detects any compile errors, warnings and deprecated features.
-And it also detects any errors during unittest.
+It detects any compile errors, warnings and deprecated features during unittest.
 
 Note: `flycheck-d` runs DMD with `-unittest` and `-main` option for unittesting.
 Please enclose main function in `version(!unittest)` block as follows:

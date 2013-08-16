@@ -22,7 +22,7 @@
 
 ;;; Commentary:
 
-;; This library adds D support to flycheck.
+;; This library adds D unittest support to flycheck.
 ;;
 ;; Requirements:
 ;;   * DMD 2.063 or later
@@ -31,8 +31,8 @@
 ;;
 ;; To use this package, add the following line to your .emacs file:
 ;;     (require 'flycheck-d)
-;; It detects any compile errors, warnings and deprecated features.
-;; And it also detects any errors during unit test.
+;;     (setup-flycheck-d-unittest)
+;; It detects any compile errors, warnings and deprecated features during unittest.
 ;;
 ;; Note: flycheck-d runs DMD with -unittest and -main option for unittesting.
 ;; Please enclose main function in version(!unittest) block as follows:
@@ -58,64 +58,40 @@
 (require 'dash)
 (require 's)
 
-(defconst d-error-patterns
-  '((error line-start (file-name) "(" line "): Error: " (message) line-end)
-    (warning line-start (file-name) "(" line "): Warning: " (message) line-end)
-    (warning line-start (file-name) "(" line "): Deprecation: " (message) line-end))
-  "Error patterns for D.")
-
-(defconst d-unittest-error-patterns
+(defconst d-dmd-unittest-error-patterns
   '((error line-start (one-or-more anything) "@" (file-name) (zero-or-one ".d") "(" line "): " (message)))
-  "Error patterns for D unittest.")
+  "Error patterns for D unittest using the DMD compiler.")
 
-(defun flycheck-d-base-dir ()
-  (let* ((str (buffer-string))
-         (nest (if (string-match "module\s+\\([^\s]+\\);" str)
-                   (->> str
-                     (match-string-no-properties 1)
-                     string-to-vector
-                     (cl-count ?.))
-                   0)))
-    (when (equal (file-name-nondirectory (buffer-file-name)) "package.d")
-      (cl-incf nest))
-    (concat "-I./" (s-repeat nest "../"))))
-
-(flycheck-define-checker d
-  "A D syntax checker using D compiler."
-  :command ("dmd" "-debug" "-o-" "-property" "-wi" (eval (flycheck-d-base-dir)) source)
-  :error-patterns
-  ((error line-start (file-name) "(" line "): Error: " (message) line-end)
-   (warning line-start (file-name) "(" line "): Warning: " (message) line-end)
-   (warning line-start (file-name) "(" line "): Deprecation: " (message) line-end))
-  :modes d-mode
-  :next-checkers ((warnings-only . d-unittest)))
-
-(flycheck-define-checker d-unittest
-  "A syntax and unittest checker for D."
-  :command ("rdmd" "-debug" "-property" "-wi" (eval (flycheck-d-base-dir)) "-unittest" "-main" source)
+(flycheck-define-checker d-dmd-unittest
+  "A D syntax and unittest checker using the DMD compiler."
+  :command ("rdmd" "-debug" "-property" "-wi"
+                   (eval (s-concat "-I" (flycheck-d-base-directory)))
+                   "-unittest" "-main" source)
   :error-parser
   (lambda (output _checker _buffer)
-    (let* ((d-pat-regexp (--map (cons (flycheck-rx-to-string `(and ,@(cdr it)) :no-group)
-                                    (car it))
-                              d-error-patterns))
-           (d-unittest-pat-regexp (--map (cons (flycheck-rx-to-string `(and ,@(cdr it)) :no-group)
+    (let* ((d-checker-regexp (flycheck-checker-error-patterns 'd-dmd))
+           (unittest-pat-regexp (--map (cons (flycheck-rx-to-string `(and ,@(cdr it)) :no-group)
                                              (car it))
-                                       d-unittest-error-patterns))
+                                       d-dmd-unittest-error-patterns))
            (tokens (flycheck-tokenize-output-with-patterns
-                    output (append d-pat-regexp d-unittest-pat-regexp))))
+                    output (append d-checker-regexp unittest-pat-regexp))))
       (-flatten
-       (append (flycheck-parse-errors-with-patterns tokens d-pat-regexp)
+       (append (flycheck-parse-errors-with-patterns tokens d-checker-regexp)
                (mapcar (lambda (err)
-                         (if (null err) err
-                             (setf (flycheck-error-filename err)
-                                   (concat (flycheck-error-filename err) ".d"))
-                             err))
+                         (when err
+                           (setf (flycheck-error-filename err)
+                                 (concat (flycheck-error-filename err) ".d"))
+                           err))
                        (flycheck-parse-errors-with-patterns tokens
-                                                            d-unittest-pat-regexp))))))
+                                                            unittest-pat-regexp))))))
   :modes d-mode)
 
-(add-to-list 'flycheck-checkers 'd-unittest)
-(add-to-list 'flycheck-checkers 'd)
+;;;###autoload
+(defun setup-flycheck-d-unittest ()
+  "Set up for flycheck D unittest checkers."
+  (add-to-list 'flycheck-checkers 'd-dmd-unittest)
+  (put 'd-dmd :flycheck-next-checkers
+       (cons '(warnings-only . d-dmd-unittest) (flycheck-checker-next-checkers 'd-dmd))))
 
 (provide 'flycheck-d)
 ;;; flycheck-d.el ends here

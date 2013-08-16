@@ -1,4 +1,4 @@
-;;; flycheck-d.el --- Add D support to flycheck
+;;; flycheck-d.el --- Add D unittest support to flycheck
 
 ;; Copyright (C) 2013 by Tomoya Tanjo
 

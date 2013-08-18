@@ -26,7 +26,7 @@
 ;;
 ;; Requirements:
 ;;   * DMD 2.063 or later
-;;   * flycheck.el (https://github.com/lunaryorn/flycheck)
+;;   * flycheck.el (https://github.com/flycheck/flycheck)
 ;;   * dash.el (https://github.com/magnars/dash.el)
 ;;
 ;; To use this package, add the following line to your .emacs file:

@@ -89,7 +89,7 @@
 ;;;###autoload
 (defun setup-flycheck-d-unittest ()
   "Set up for flycheck D unittest checkers."
-  (add-to-list 'flycheck-checkers 'd-dmd-unittest)
+  (add-to-list 'flycheck-checkers 'd-dmd-unittest 'append)
   (flycheck-add-next-checker 'd-dmd '(warnings-only . d-dmd-unittest)))
 
 (provide 'flycheck-d-unittest)

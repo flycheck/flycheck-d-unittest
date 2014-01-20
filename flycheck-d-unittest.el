@@ -4,7 +4,7 @@
 
 ;; Author: Tomoya Tanjo <ttanjo@gmail.com>
 ;; URL: https://github.com/tom-tan/flycheck-d-unittest/
-;; Package-Requires: ((flycheck "0.14") (dash "1.4.0"))
+;; Package-Requires: ((flycheck "0.17") (dash "1.4.0"))
 ;; Keywords: flycheck, d
 
 ;; This program is free software; you can redistribute it and/or modify
@@ -90,8 +90,7 @@
 (defun setup-flycheck-d-unittest ()
   "Set up for flycheck D unittest checkers."
   (add-to-list 'flycheck-checkers 'd-dmd-unittest)
-  (put 'd-dmd :flycheck-next-checkers
-       (cons '(warnings-only . d-dmd-unittest) (flycheck-checker-next-checkers 'd-dmd))))
+  (flycheck-add-next-checker 'd-dmd '(warnings-only . d-dmd-unittest)))
 
 (provide 'flycheck-d-unittest)
 ;;; flycheck-d-unittest.el ends here

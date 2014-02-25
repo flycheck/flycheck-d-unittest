@@ -38,5 +38,5 @@ unittest
 ```
 
 Link:
-  * [Start D with Emacs](https://github.com/flycheck/flycheck-d/wiki/Start-D-with-Emacs)
+  * [Start D with Emacs](https://github.com/flycheck/flycheck-d-unittest/wiki/Start-D-with-Emacs)
   * [Emacs で始める D言語!](http://qiita.com/tm_tn/items/1d01c4500e1ca7632140) (Written in Japanese)

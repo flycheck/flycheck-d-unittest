@@ -1,14 +1,10 @@
-## For Flycheck-d users
-Now D syntax checker is a part of Flycheck!
-This library only provides D unittest checker.
-
 # Flycheck-d-unittest
 
 This library adds D unittest support to flycheck.
 
 Requirements:
   * DMD 2.063 or later
-  * [flycheck.el](https://github.com/flycheck/flycheck)
+  * [Flycheck](https://github.com/flycheck/flycheck)
   * [dash.el](https://github.com/magnars/dash.el)
 
 To use this package, add the following line to your `.emacs` file:

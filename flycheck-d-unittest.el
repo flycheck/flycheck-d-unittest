@@ -4,7 +4,7 @@
 
 ;; Author: Tomoya Tanjo <ttanjo@gmail.com>
 ;; URL: https://github.com/tom-tan/flycheck-d-unittest/
-;; Package-Requires: ((flycheck "0.17") (dash "1.4.0"))
+;; Package-Requires: ((flycheck "0.18") (dash "1.4.0"))
 ;; Keywords: flycheck, d
 
 ;; This program is free software; you can redistribute it and/or modify
@@ -66,6 +66,7 @@
   "A D syntax and unittest checker using the DMD compiler."
   :command ("rdmd" "-debug" "-wi"
                    (eval (s-concat "-I" (flycheck-d-base-directory)))
+                   (option-list "-I" flycheck-dmd-include-path s-prepend)
                    "-unittest" "-main" source)
   :error-parser
   (lambda (output _checker _buffer)

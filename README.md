@@ -7,6 +7,8 @@ Requirements:
   * [Flycheck](https://github.com/flycheck/flycheck)
   * [dash.el](https://github.com/magnars/dash.el)
 
+You can install it by using `package-install` via [MELPA](http://melpa.milkbox.net/).
+
 To use this package, add the following line to your `.emacs` file:
 ```elisp
     (require 'flycheck-d-unittest)

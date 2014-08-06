@@ -65,7 +65,7 @@
 (flycheck-define-checker d-dmd-unittest
   "A D syntax and unittest checker using the DMD compiler."
   :command ("rdmd" "-debug" "-wi"
-                   (eval (s-concat "-I" (flycheck-d-base-directory)))
+                   (eval (concat "-I" (flycheck-d-base-directory)))
                    (option-list "-I" flycheck-dmd-include-path s-prepend)
                    "-unittest" "-main" source)
   :error-parser

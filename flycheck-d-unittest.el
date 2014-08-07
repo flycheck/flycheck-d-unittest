@@ -56,7 +56,6 @@
 ;;; Code:
 (require 'flycheck)
 (require 'dash)
-(require 's)
 
 (defconst d-dmd-unittest-error-patterns
   '((error line-start (one-or-more anything) "@" (file-name) (zero-or-one ".d") "(" line "): " (message)))
@@ -66,7 +65,7 @@
   "A D syntax and unittest checker using the DMD compiler."
   :command ("rdmd" "-debug" "-wi"
                    (eval (concat "-I" (flycheck-d-base-directory)))
-                   (option-list "-I" flycheck-dmd-include-path s-prepend)
+                   (option-list "-I" flycheck-dmd-include-path concat)
                    "-unittest" "-main" source)
   :error-parser
   (lambda (output _checker _buffer)

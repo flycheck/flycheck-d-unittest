@@ -3,7 +3,7 @@
 This library adds D unittest support to flycheck.
 
 Requirements:
-  * DMD 2.063 or later
+  * DMD 2.066 or later
   * [Flycheck](https://github.com/flycheck/flycheck)
   * [dash.el](https://github.com/magnars/dash.el)
 

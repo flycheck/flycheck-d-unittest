@@ -90,7 +90,7 @@
 (defun setup-flycheck-d-unittest ()
   "Set up for flycheck D unittest checkers."
   (add-to-list 'flycheck-checkers 'd-dmd-unittest 'append)
-  (flycheck-add-next-checker 'd-dmd '(warnings-only . d-dmd-unittest)))
+  (flycheck-add-next-checker 'd-dmd '(warning . d-dmd-unittest)))
 
 (provide 'flycheck-d-unittest)
 ;;; flycheck-d-unittest.el ends here

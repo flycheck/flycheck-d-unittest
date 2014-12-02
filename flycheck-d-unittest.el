@@ -61,6 +61,12 @@
   '((error line-start (one-or-more anything) "@" (file-name) (zero-or-one ".d") "(" line "): " (message)))
   "Error patterns for D unittest using the DMD compiler.")
 
+(defun flycheck-d-unittest-parse-errors-with-patterns (buffer tokens patterns checker)
+  (with-current-buffer buffer
+    (mapcar (lambda (err)
+              (flycheck-parse-error-with-patterns err patterns checker))
+            tokens)))
+
 (flycheck-define-checker d-dmd-unittest
   "A D syntax and unittest checker using the DMD compiler."
   :command ("rdmd" "-debug" "-vcolumns" "-wi"
@@ -68,7 +74,7 @@
                    (option-list "-I" flycheck-dmd-include-path concat)
                    "-unittest" "-main" source)
   :error-parser
-  (lambda (output _checker _buffer)
+  (lambda (output checker buffer)
     (let* ((d-checker-regexp (flycheck-checker-error-patterns 'd-dmd))
            (unittest-pat-regexp (--map (cons (flycheck-rx-to-string `(and ,@(cdr it)) :no-group)
                                              (car it))
@@ -76,14 +82,16 @@
            (tokens (flycheck-tokenize-output-with-patterns
                     output (append d-checker-regexp unittest-pat-regexp))))
       (-flatten
-       (append (flycheck-parse-errors-with-patterns tokens d-checker-regexp)
+       (append (flycheck-d-unittest-parse-errors-with-patterns buffer tokens d-checker-regexp checker)
                (mapcar (lambda (err)
                          (when err
                            (setf (flycheck-error-filename err)
                                  (concat (flycheck-error-filename err) ".d"))
                            err))
-                       (flycheck-parse-errors-with-patterns tokens
-                                                            unittest-pat-regexp))))))
+                       (flycheck-d-unittest-parse-errors-with-patterns buffer
+                                                                       tokens
+                                                                       unittest-pat-regexp
+                                                                       checker))))))
   :modes d-mode)
 
 ;;;###autoload

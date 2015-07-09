@@ -75,7 +75,7 @@
                    "-unittest" "-main" source)
   :error-parser
   (lambda (output checker buffer)
-    (let* ((d-checker-regexp (flycheck-checker-error-patterns 'd-dmd))
+    (let* ((d-checker-regexp (flycheck-checker-get 'd-dmd 'error-patterns))
            (unittest-pat-regexp (--map (cons (flycheck-rx-to-string `(and ,@(cdr it)) :no-group)
                                              (car it))
                                        d-dmd-unittest-error-patterns))

@@ -1,6 +1,6 @@
 ;;; flycheck-d-unittest.el --- Add D unittest support to flycheck
 
-;; Copyright (C) 2013, 2014 by Tomoya Tanjo
+;; Copyright (C) 2013-2016 by Tomoya Tanjo
 
 ;; Author: Tomoya Tanjo <ttanjo@gmail.com>
 ;; URL: https://github.com/tom-tan/flycheck-d-unittest/
